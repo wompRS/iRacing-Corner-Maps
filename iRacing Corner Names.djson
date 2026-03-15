@@ -1,0 +1,348 @@
+{
+  "Version": 2,
+  "Id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "BaseHeight": 350,
+  "BaseWidth": 450,
+  "BackgroundColor": "#00000000",
+  "Screens": [
+    {
+      "Name": "Main",
+      "ScreenId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+      "InGameScreen": true,
+      "IdleScreen": false,
+      "PitScreen": false,
+      "RenderingSkip": 0,
+      "AllowOverlays": true,
+      "IsForegroundLayer": false,
+      "IsOverlayLayer": false,
+      "IsBackgroundLayer": false,
+      "OverlayTriggerExpression": { "Expression": "" },
+      "ScreenEnabledExpression": { "Expression": "" },
+      "OverlayMaxDuration": 0,
+      "OverlayMinDuration": 0,
+      "BackgroundColor": "#00FFFFFF",
+      "Items": [
+        {
+          "$type": "SimHub.Plugins.OutputPlugins.GraphicalDash.Models.Layer, SimHub.Plugins",
+          "Group": false,
+          "Repetitions": 0,
+          "Childrens": [
+
+            {
+              "$type": "SimHub.Plugins.OutputPlugins.GraphicalDash.Models.RectangleItem, SimHub.Plugins",
+              "BackgroundColor": "#CC1A1A2E",
+              "BorderStyle": 0,
+              "CornerRadius": 8.0,
+              "Height": 70.0,
+              "Left": 5.0,
+              "Top": 275.0,
+              "Visible": true,
+              "BlinkPhasisInverted": false,
+              "Width": 250.0,
+              "Name": "InfoBoxBg",
+              "RenderingSkip": 0,
+              "MinimumRefreshIntervalMS": 0.0,
+              "Bindings": {
+                "Visible": {
+                  "Formula": {
+                    "JSExt": 0,
+                    "Interpreter": 1,
+                    "Expression": "return $prop('variable.trackSupported') === '1';"
+                  },
+                  "Mode": 2
+                }
+              }
+            },
+
+            {
+              "$type": "SimHub.Plugins.OutputPlugins.GraphicalDash.Models.TextItem, SimHub.Plugins",
+              "IsTextItem": true,
+              "Font": "Segoe UI",
+              "FontWeight": "Bold",
+              "FontSize": 24.0,
+              "Text": "",
+              "TextColor": "#FFFFFFFF",
+              "HorizontalAlignment": 0,
+              "VerticalAlignment": 1,
+              "BackgroundColor": "#00FFFFFF",
+              "Height": 35.0,
+              "Left": 15.0,
+              "Top": 278.0,
+              "Visible": true,
+              "BlinkPhasisInverted": false,
+              "Width": 230.0,
+              "Name": "CornerNumberDirection",
+              "RenderingSkip": 0,
+              "MinimumRefreshIntervalMS": 0.0,
+              "Bindings": {
+                "Text": {
+                  "Formula": {
+                    "JSExt": 0,
+                    "Interpreter": 1,
+                    "Expression": "var name = $prop('variable.cornerName') || '';\nvar dir = $prop('variable.cornerDirection') || '';\nif (!name && !dir) {\n  var next = $prop('variable.nextCornerName') || '';\n  return next ? '> ' + next : '';\n}\nvar display = name;\nif (dir) display = dir + ' - ' + name;\nreturn display;"
+                  },
+                  "Mode": 2
+                },
+                "TextColor": {
+                  "Formula": {
+                    "JSExt": 0,
+                    "Interpreter": 1,
+                    "Expression": "var name = $prop('variable.cornerName') || '';\nreturn name ? '#FFFFFFFF' : '#99AAAAAA';"
+                  },
+                  "Mode": 2
+                },
+                "Visible": {
+                  "Formula": {
+                    "JSExt": 0,
+                    "Interpreter": 1,
+                    "Expression": "return $prop('variable.trackSupported') === '1';"
+                  },
+                  "Mode": 2
+                }
+              }
+            },
+
+            {
+              "$type": "SimHub.Plugins.OutputPlugins.GraphicalDash.Models.TextItem, SimHub.Plugins",
+              "IsTextItem": true,
+              "Font": "Segoe UI",
+              "FontWeight": "Normal",
+              "FontSize": 13.0,
+              "Text": "",
+              "TextColor": "#99AAAAAA",
+              "HorizontalAlignment": 0,
+              "VerticalAlignment": 1,
+              "BackgroundColor": "#00FFFFFF",
+              "Height": 22.0,
+              "Left": 15.0,
+              "Top": 318.0,
+              "Visible": true,
+              "BlinkPhasisInverted": false,
+              "Width": 230.0,
+              "Name": "NextCornerLabel",
+              "RenderingSkip": 0,
+              "MinimumRefreshIntervalMS": 0.0,
+              "Bindings": {
+                "Text": {
+                  "Formula": {
+                    "JSExt": 0,
+                    "Interpreter": 1,
+                    "Expression": "var name = $prop('variable.cornerName') || '';\nvar next = $prop('variable.nextCornerName') || '';\nif (name && next) return 'Next: ' + next;\nreturn '';"
+                  },
+                  "Mode": 2
+                },
+                "Visible": {
+                  "Formula": {
+                    "JSExt": 0,
+                    "Interpreter": 1,
+                    "Expression": "return $prop('variable.trackSupported') === '1';"
+                  },
+                  "Mode": 2
+                }
+              }
+            },
+
+            {
+              "$type": "SimHub.Plugins.OutputPlugins.GraphicalDash.Models.TextItem, SimHub.Plugins",
+              "IsTextItem": true,
+              "Font": "Consolas",
+              "FontWeight": "Normal",
+              "FontSize": 11.0,
+              "Text": "",
+              "TextColor": "#6600FF00",
+              "HorizontalAlignment": 2,
+              "VerticalAlignment": 1,
+              "BackgroundColor": "#00FFFFFF",
+              "Height": 20.0,
+              "Left": 340.0,
+              "Top": 325.0,
+              "Visible": false,
+              "BlinkPhasisInverted": false,
+              "Width": 100.0,
+              "Name": "CalibrationPct",
+              "RenderingSkip": 0,
+              "MinimumRefreshIntervalMS": 0.0,
+              "Bindings": {
+                "Text": {
+                  "Formula": {
+                    "JSExt": 0,
+                    "Interpreter": 1,
+                    "Expression": "return $prop('variable.calibrationPct') || '0';"
+                  },
+                  "Mode": 2
+                }
+              }
+            },
+
+            {
+              "$type": "SimHub.Plugins.OutputPlugins.GraphicalDash.Models.ImageItem, SimHub.Plugins",
+              "Image": "TrackMapBase",
+              "AutoSize": false,
+              "BackgroundColor": "#00FFFFFF",
+              "Height": 270.0,
+              "Left": 5.0,
+              "Top": 2.0,
+              "Visible": true,
+              "BlinkPhasisInverted": false,
+              "Width": 440.0,
+              "Name": "TrackMapBaseImage",
+              "RenderingSkip": 0,
+              "MinimumRefreshIntervalMS": 0.0,
+              "Bindings": {
+                "Visible": {
+                  "Formula": {
+                    "JSExt": 0,
+                    "Interpreter": 1,
+                    "Expression": "return $prop('variable.trackSupported') === '1';"
+                  },
+                  "Mode": 2
+                }
+              }
+            }
+
+          ],
+          "Visible": true,
+          "BlinkPhasisInverted": false,
+          "Name": "MainLayer",
+          "Height": 350.0,
+          "Width": 450.0,
+          "Left": 0.0,
+          "Top": 0.0,
+          "RenderingSkip": 0,
+          "MinimumRefreshIntervalMS": 0.0,
+          "Bindings": {
+            "Visible": {
+              "Formula": {
+                "JSExt": 0,
+                "Interpreter": 1,
+                "Expression": "return $prop('DataCorePlugin.GameRunning');"
+              },
+              "Mode": 2
+            }
+          }
+        }
+      ],
+      "MinimumRefreshIntervalMS": 0.0
+    }
+  ],
+  "Images": [
+    {
+      "Name": "TrackMapBase",
+      "Extension": ".png",
+      "Modified": false,
+      "Optimized": false,
+      "Width": 760,
+      "Height": 560,
+      "Length": 7302,
+      "MD5": ""
+    }
+  ],
+  "Variables": {
+    "DashboardVariables": [
+      {
+        "VariableName": "cornerInfo",
+        "EvaluateOnlyOnce": false,
+        "OverrideWithParentDashboardVariableWhenAvailable": false,
+        "ValueExpression": {
+          "JSExt": 1,
+          "Interpreter": 1,
+          "Expression": "return lookupCorner();"
+        },
+        "EvaluateBeforeScreenRoles": false
+      },
+      {
+        "VariableName": "cornerName",
+        "EvaluateOnlyOnce": false,
+        "OverrideWithParentDashboardVariableWhenAvailable": false,
+        "ValueExpression": {
+          "JSExt": 0,
+          "Interpreter": 1,
+          "Expression": "var info = $prop('variable.cornerInfo') || '';\nreturn info.split('|')[0] || '';"
+        },
+        "EvaluateBeforeScreenRoles": false
+      },
+      {
+        "VariableName": "cornerDirection",
+        "EvaluateOnlyOnce": false,
+        "OverrideWithParentDashboardVariableWhenAvailable": false,
+        "ValueExpression": {
+          "JSExt": 0,
+          "Interpreter": 1,
+          "Expression": "var info = $prop('variable.cornerInfo') || '';\nreturn info.split('|')[1] || '';"
+        },
+        "EvaluateBeforeScreenRoles": false
+      },
+      {
+        "VariableName": "cornerSection",
+        "EvaluateOnlyOnce": false,
+        "OverrideWithParentDashboardVariableWhenAvailable": false,
+        "ValueExpression": {
+          "JSExt": 0,
+          "Interpreter": 1,
+          "Expression": "var info = $prop('variable.cornerInfo') || '';\nreturn info.split('|')[2] || '';"
+        },
+        "EvaluateBeforeScreenRoles": false
+      },
+      {
+        "VariableName": "nextCornerName",
+        "EvaluateOnlyOnce": false,
+        "OverrideWithParentDashboardVariableWhenAvailable": false,
+        "ValueExpression": {
+          "JSExt": 0,
+          "Interpreter": 1,
+          "Expression": "var info = $prop('variable.cornerInfo') || '';\nreturn info.split('|')[3] || '';"
+        },
+        "EvaluateBeforeScreenRoles": false
+      },
+      {
+        "VariableName": "trackSupported",
+        "EvaluateOnlyOnce": false,
+        "OverrideWithParentDashboardVariableWhenAvailable": false,
+        "ValueExpression": {
+          "JSExt": 0,
+          "Interpreter": 1,
+          "Expression": "var info = $prop('variable.cornerInfo') || '';\nvar parts = info.split('|');\nreturn parts[4] || '0';"
+        },
+        "EvaluateBeforeScreenRoles": false
+      },
+      {
+        "VariableName": "calibrationPct",
+        "EvaluateOnlyOnce": false,
+        "OverrideWithParentDashboardVariableWhenAvailable": false,
+        "ValueExpression": {
+          "JSExt": 0,
+          "Interpreter": 1,
+          "Expression": "var info = $prop('variable.cornerInfo') || '';\nvar parts = info.split('|');\nreturn parts[5] || '0';"
+        },
+        "EvaluateBeforeScreenRoles": false
+      }
+    ]
+  },
+  "Metadata": {
+    "ScreenCount": 1.0,
+    "InGameScreensIndexs": [0],
+    "IdleScreensIndexs": [],
+    "MainPreviewIndex": 0,
+    "IsOverlay": true,
+    "OverlaySizeWarning": false,
+    "MetadataVersion": 2.0,
+    "PitScreensIndexs": [],
+    "Title": "iRacing Corner Names",
+    "Author": "Custom",
+    "Width": 450.0,
+    "Height": 350.0,
+    "DashboardVersion": "1.0.0"
+  },
+  "IsOverlay": true,
+  "EnableClickThroughOverlay": true,
+  "EnableOnDashboardMessaging": false,
+  "UseStrictJSIsolation": false,
+  "SnapToGrid": false,
+  "HideLabels": true,
+  "ShowForeground": true,
+  "ForegroundOpacity": 100.0,
+  "ShowBackground": true,
+  "BackgroundOpacity": 100.0,
+  "ShowBoundingRectangles": false,
+  "GridSize": 10
+}

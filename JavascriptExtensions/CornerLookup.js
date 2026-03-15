@@ -1,54 +1,38 @@
 // CornerLookup.js
-// Runs every SimHub refresh cycle.
-// Reads current track + lap position, binary searches for active corner,
-// stores results on root[] for dashboard bindings.
+// Defines lookupCorner() function for use in Dashboard Variable expressions.
+// Uses root[] for caching within the same JS engine instance.
 //
-// Dashboard binding references:
-//   root["cornerName"]       - e.g. "Flugplatz"
-//   root["cornerDirection"]  - "L", "R", or ""
-//   root["cornerSection"]    - e.g. "flugplatz" (matches SVG segment id)
-//   root["nextCornerName"]   - upcoming corner name
-//   root["trackSupported"]   - true/false
-//   root["calibrationPct"]   - current LapDistPct (for calibration)
+// Returns pipe-delimited string: "name|direction|section|nextName|supported|pct"
+// Empty fields use empty string. 'supported' is "1" or "0".
+//
+// Usage in Dashboard Variable (JSExt=1):
+//   return lookupCorner();
 
-// --- INITIALIZATION (runs once) ---
-if (!root["_init"]) {
-  root["_init"] = true;
-  root["cornerName"] = "";
-  root["cornerDirection"] = "";
-  root["cornerSection"] = "";
-  root["nextCornerName"] = "";
-  root["trackSupported"] = false;
-  root["calibrationPct"] = 0;
-  root["_lastIdx"] = -2;       // -2 = unset, -1 = between corners
-  root["_corners"] = null;     // cached corner array for current track
-  root["_trackId"] = "";       // cached track id
-}
+function lookupCorner() {
+  // --- GET TRACK AND POSITION ---
+  var rawTrackId = $prop('DataCorePlugin.GameData.TrackId');
+  var trackId = rawTrackId ? rawTrackId.toLowerCase() : "";
 
-// --- GET TRACK AND POSITION ---
-var rawTrackId = $prop('DataCorePlugin.GameData.TrackId');
-var trackId = rawTrackId ? rawTrackId.toLowerCase() : "";
+  // Fallback to TrackName
+  if (!trackId || trackId === "") {
+    var rawTrackName = $prop('DataCorePlugin.GameData.TrackName');
+    trackId = rawTrackName ? rawTrackName.toLowerCase() : "";
+  }
 
-// Also try TrackName as fallback
-if (!trackId || trackId === "") {
-  var rawTrackName = $prop('DataCorePlugin.GameData.TrackName');
-  trackId = rawTrackName ? rawTrackName.toLowerCase() : "";
-}
+  var pct = $prop('GameRawData.Telemetry.LapDistPct');
+  if (pct === null || pct === undefined) { pct = 0; }
+  var pctStr = String(Math.round(pct * 10000) / 10000);
 
-var pct = $prop('GameRawData.Telemetry.LapDistPct');
-if (pct === null || pct === undefined) { pct = 0; }
+  // --- FIND TRACK DATA ---
+  if (typeof TRACK_DATA === "undefined") {
+    return "||||0|" + pctStr;
+  }
 
-// Always expose calibration value
-root["calibrationPct"] = Math.round(pct * 10000) / 10000;
-
-// --- CHECK TRACK SUPPORT ---
-// Try exact match first, then partial matches
-var track = null;
-if (typeof TRACK_DATA !== "undefined") {
+  var track = null;
   if (TRACK_DATA[trackId]) {
     track = TRACK_DATA[trackId];
   } else {
-    // Try partial match: iterate keys and check if trackId contains the key
+    // Partial match
     var keys = Object.keys(TRACK_DATA);
     for (var k = 0; k < keys.length; k++) {
       if (trackId.indexOf(keys[k]) >= 0) {
@@ -57,79 +41,72 @@ if (typeof TRACK_DATA !== "undefined") {
       }
     }
   }
-}
 
-if (!track) {
-  root["trackSupported"] = false;
-  root["cornerName"] = "";
-  root["cornerDirection"] = "";
-  root["cornerSection"] = "";
-  root["nextCornerName"] = "";
-  return;
-}
-
-root["trackSupported"] = true;
-
-// --- CACHE CORNERS ON TRACK CHANGE ---
-if (root["_trackId"] !== trackId) {
-  root["_trackId"] = trackId;
-  root["_corners"] = track.corners;
-  root["_lastIdx"] = -2; // force update
-}
-
-var corners = root["_corners"];
-
-// --- BINARY SEARCH FOR ACTIVE CORNER ---
-var idx = -1;
-var lo = 0;
-var hi = corners.length - 1;
-
-while (lo <= hi) {
-  var mid = Math.floor((lo + hi) / 2);
-  if (pct >= corners[mid].start && pct < corners[mid].end) {
-    idx = mid;
-    break;
-  } else if (pct < corners[mid].start) {
-    hi = mid - 1;
-  } else {
-    lo = mid + 1;
+  if (!track) {
+    return "||||0|" + pctStr;
   }
-}
 
-// --- UPDATE ONLY ON CHANGE ---
-if (idx !== root["_lastIdx"]) {
-  root["_lastIdx"] = idx;
+  // --- CACHE CORNERS ON TRACK CHANGE ---
+  if (root["_trackId"] !== trackId) {
+    root["_trackId"] = trackId;
+    root["_corners"] = track.corners;
+    root["_lastIdx"] = -2;
+    root["_lastResult"] = "||||1|0";
+  }
 
-  if (idx >= 0) {
-    // In a corner
-    var c = corners[idx];
-    root["cornerName"] = c.name;
-    root["cornerDirection"] = c.direction ? c.direction : "";
-    root["cornerSection"] = c.section;
+  var corners = root["_corners"];
 
-    // Next corner
-    if (idx + 1 < corners.length) {
-      root["nextCornerName"] = corners[idx + 1].name;
+  // --- BINARY SEARCH ---
+  var idx = -1;
+  var lo = 0;
+  var hi = corners.length - 1;
+
+  while (lo <= hi) {
+    var mid = Math.floor((lo + hi) / 2);
+    if (pct >= corners[mid].start && pct < corners[mid].end) {
+      idx = mid;
+      break;
+    } else if (pct < corners[mid].start) {
+      hi = mid - 1;
     } else {
-      root["nextCornerName"] = corners[0].name;
-    }
-  } else {
-    // Between corners - find next upcoming
-    root["cornerName"] = "";
-    root["cornerDirection"] = "";
-    root["cornerSection"] = "";
-
-    var foundNext = false;
-    for (var j = 0; j < corners.length; j++) {
-      if (corners[j].start > pct) {
-        root["nextCornerName"] = corners[j].name;
-        foundNext = true;
-        break;
-      }
-    }
-    if (!foundNext) {
-      // Past all corners, next is first corner
-      root["nextCornerName"] = corners[0].name;
+      lo = mid + 1;
     }
   }
+
+  // --- UPDATE ONLY ON CHANGE ---
+  if (idx !== root["_lastIdx"]) {
+    root["_lastIdx"] = idx;
+
+    if (idx >= 0) {
+      var c = corners[idx];
+      var dir = c.direction ? c.direction : "";
+      var nextName = "";
+      if (idx + 1 < corners.length) {
+        nextName = corners[idx + 1].name;
+      } else {
+        nextName = corners[0].name;
+      }
+      root["_lastResult"] = c.name + "|" + dir + "|" + c.section + "|" + nextName + "|1|" + pctStr;
+    } else {
+      // Between corners
+      var nextName2 = "";
+      for (var j = 0; j < corners.length; j++) {
+        if (corners[j].start > pct) {
+          nextName2 = corners[j].name;
+          break;
+        }
+      }
+      if (!nextName2 && corners.length > 0) {
+        nextName2 = corners[0].name;
+      }
+      root["_lastResult"] = "|||" + nextName2 + "|1|" + pctStr;
+    }
+  } else {
+    // Same corner, just update pct
+    var parts = root["_lastResult"].split("|");
+    parts[5] = pctStr;
+    root["_lastResult"] = parts.join("|");
+  }
+
+  return root["_lastResult"];
 }
