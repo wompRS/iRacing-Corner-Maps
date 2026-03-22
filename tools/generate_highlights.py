@@ -15,12 +15,12 @@ CORNER_DATA_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "generated")
 SIMHUB_DIR = r"C:\Program Files (x86)\SimHub\DashTemplates\iRacing Corner Names"
 
-OUT_SIZE = 140
-PADDING = 18
+OUT_SIZE = 400
+PADDING = 30
 STROKE_COLOR = (255, 140, 0, 255)
-STROKE_WIDTH = 7
+STROKE_WIDTH = 14
 ENTRY_DOT_COLOR = (255, 255, 255, 220)
-ENTRY_DOT_R = 6
+ENTRY_DOT_R = 12
 EXIT_ARROW_COLOR = (255, 255, 255, 100)
 BG_COLOR = (0, 0, 0, 0)
 
@@ -170,8 +170,8 @@ def create_corner_image(points, start_pct, end_pct):
             color = STROKE_COLOR
             width = STROKE_WIDTH
         else:
-            color = (100, 100, 100, 120)
-            width = 3
+            color = (100, 100, 100, 150)
+            width = 8
         draw.line([transformed[j], transformed[j+1]], fill=color, width=width, joint="curve")
 
     # Entry dot: first point that's within the actual section

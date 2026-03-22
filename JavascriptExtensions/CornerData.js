@@ -184,6 +184,7 @@ TRACK_DATA["nurburgring nordschleife"] = {
   ]
 };
 
-// Alias: VLN layout uses combined data as baseline
+// Aliases for different iRacing track ID variants
+TRACK_DATA["nurburgring combinedshortb"] = TRACK_DATA["nurburgring combined"];
 TRACK_DATA["nurburgring combined gesamtstrecke vln"] = TRACK_DATA["nurburgring combined"];
 TRACK_DATA["nurburgring combined vln"] = TRACK_DATA["nurburgring combined"];

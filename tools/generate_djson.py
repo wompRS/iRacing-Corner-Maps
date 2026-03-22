@@ -59,11 +59,11 @@ debug_expr = (
 )
 
 # Layout: compact horizontal bar
-# [Corner Shape 80x80] [Corner Name + Next Corner]
-IMG_SIZE = 80
-TEXT_W = 220
-W = IMG_SIZE + TEXT_W + 10  # 310
-H = IMG_SIZE + 8  # 88
+# [Corner Shape 140x140] [Corner Name + Next Corner]
+IMG_SIZE = 140
+TEXT_W = 230
+W = IMG_SIZE + TEXT_W + 10  # 380
+H = IMG_SIZE + 8  # 148
 
 dashboard = {
     "DashboardDebugManager": {},
