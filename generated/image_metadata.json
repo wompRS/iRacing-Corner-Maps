@@ -1,164 +1,5 @@
 {
-  "DashboardDebugManager": {},
-  "Version": 2,
-  "Id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "BaseHeight": 88,
-  "BaseWidth": 310,
-  "BackgroundColor": "#00000000",
-  "Screens": [
-    {
-      "Name": "Main",
-      "ScreenId": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-      "InGameScreen": true,
-      "IdleScreen": true,
-      "PitScreen": false,
-      "BackgroundColor": "#00FFFFFF",
-      "Items": [
-        {
-          "$type": "SimHub.Plugins.OutputPlugins.GraphicalDash.Models.Layer, SimHub.Plugins",
-          "Top": 0.0,
-          "Left": 0.0,
-          "Height": 88.0,
-          "Width": 310.0,
-          "BackgroundColor": "#00FFFFFF",
-          "Visible": true,
-          "Name": "MainLayer",
-          "Childrens": [
-            {
-              "$type": "SimHub.Plugins.OutputPlugins.GraphicalDash.Models.RectangleItem, SimHub.Plugins",
-              "BackgroundColor": "#DD101020",
-              "Height": 88.0,
-              "Left": 0.0,
-              "Top": 0.0,
-              "Visible": true,
-              "Width": 310.0,
-              "Name": "Background",
-              "Sid": 1
-            },
-            {
-              "$type": "SimHub.Plugins.OutputPlugins.GraphicalDash.Models.ImageItem, SimHub.Plugins",
-              "Image": "CornerBlank",
-              "AutoSize": false,
-              "BackgroundColor": "#00FFFFFF",
-              "Height": 80.0,
-              "Left": 4.0,
-              "Top": 4.0,
-              "Visible": true,
-              "Width": 80.0,
-              "Name": "CornerShape",
-              "Sid": 2,
-              "Bindings": {
-                "Image": {
-                  "Formula": {
-                    "JSExt": 1,
-                    "Interpreter": 1,
-                    "Expression": "var info = lookupCorner();\nvar section = info.split('|')[2] || '';\nvar m={'adenauer-forst':'C_adenauer_forst','advan-bogen':'C_advan_bogen','antoniusbuche':'C_antoniusbuche','aremberg':'C_aremberg','bergwerk':'C_bergwerk','bilstein-kurve':'C_bilstein_kurve','breidscheid':'C_breidscheid','bruennchen':'C_bruennchen','dottinger-hohe':'C_dottinger_hohe','dreifach-rechts':'C_dreifach_rechts','dunlop-kehre':'C_dunlop_kehre','einfahrt-nordschleife':'C_einfahrt_nordschleife','eiskurve':'C_eiskurve','eschbach':'C_eschbach','ex-muhle':'C_ex_muhle','flugplatz':'C_flugplatz','ford-kurve':'C_ford_kurve','fuchsroehre':'C_fuchsroehre','galgenkopf':'C_galgenkopf','hatzenbach':'C_hatzenbach','hedwigshoehe':'C_hedwigshoehe','hocheichen':'C_hocheichen','hohe-acht':'C_hohe_acht','hohenrain':'C_hohenrain','kallenhard':'C_kallenhard','karussell':'C_karussell','kesselchen':'C_kesselchen','kleines-karussell':'C_kleines_karussell','klostertal':'C_klostertal','kompression':'C_kompression','kottenborn':'C_kottenborn','lauda-links':'C_lauda_links','metzgesfeld':'C_metzgesfeld','mutkurve':'C_mutkurve','nordkehre':'C_nordkehre','pflanzgarten':'C_pflanzgarten','postbruecke':'C_postbruecke','posten-147':'C_posten_147','quiddelbacher-hohe':'C_quiddelbacher_hohe','ravenol-kurve':'C_ravenol_kurve','schumacher-s':'C_schumacher_s','schwalbenschwanz':'C_schwalbenschwanz','schwedenkreuz':'C_schwedenkreuz','spiegelkurve':'C_spiegelkurve','stefan-bellof-s':'C_stefan_bellof_s','steilstrecke':'C_steilstrecke','t13':'C_t13','tiergarten':'C_tiergarten','veedol-schikane':'C_veedol_schikane','wehrseifen':'C_wehrseifen','wippermann':'C_wippermann','yokohama-s':'C_yokohama_s'};\nreturn m[section] || 'CornerBlank';"
-                  },
-                  "Mode": 2
-                }
-              }
-            },
-            {
-              "$type": "SimHub.Plugins.OutputPlugins.GraphicalDash.Models.TextItem, SimHub.Plugins",
-              "IsTextItem": true,
-              "Font": "Segoe UI",
-              "FontWeight": "Bold",
-              "FontSize": 22.0,
-              "Text": "",
-              "TextColor": "#FFFFFFFF",
-              "HorizontalAlignment": 0,
-              "VerticalAlignment": 1,
-              "BackgroundColor": "#00FFFFFF",
-              "Height": 36.0,
-              "Left": 90.0,
-              "Top": 6.0,
-              "Visible": true,
-              "Width": 210.0,
-              "Name": "CornerName",
-              "Sid": 3,
-              "Bindings": {
-                "Text": {
-                  "Formula": {
-                    "JSExt": 1,
-                    "Interpreter": 1,
-                    "Expression": "var info = lookupCorner();\nvar parts = info.split('|');\nvar name = parts[0] || '';\nvar dir = parts[1] || '';\nif (!name) {\n  var next = parts[3] || '';\n  return next ? '> ' + next : '';\n}\nif (dir) return dir + '  ' + name;\nreturn name;"
-                  },
-                  "Mode": 2
-                },
-                "TextColor": {
-                  "Formula": {
-                    "JSExt": 1,
-                    "Interpreter": 1,
-                    "Expression": "var info = lookupCorner();\nreturn info.split('|')[0] ? '#FFFFFFFF' : '#88AAAAAA';"
-                  },
-                  "Mode": 2
-                }
-              }
-            },
-            {
-              "$type": "SimHub.Plugins.OutputPlugins.GraphicalDash.Models.TextItem, SimHub.Plugins",
-              "IsTextItem": true,
-              "Font": "Segoe UI",
-              "FontWeight": "Normal",
-              "FontSize": 12.0,
-              "Text": "",
-              "TextColor": "#88AAAAAA",
-              "HorizontalAlignment": 0,
-              "VerticalAlignment": 1,
-              "BackgroundColor": "#00FFFFFF",
-              "Height": 22.0,
-              "Left": 90.0,
-              "Top": 44.0,
-              "Visible": true,
-              "Width": 210.0,
-              "Name": "NextCorner",
-              "Sid": 4,
-              "Bindings": {
-                "Text": {
-                  "Formula": {
-                    "JSExt": 1,
-                    "Interpreter": 1,
-                    "Expression": "var info = lookupCorner();\nvar parts = info.split('|');\nvar name = parts[0] || '';\nvar next = parts[3] || '';\nif (name && next && name !== next) return 'Next: ' + next;\nreturn '';"
-                  },
-                  "Mode": 2
-                }
-              }
-            },
-            {
-              "$type": "SimHub.Plugins.OutputPlugins.GraphicalDash.Models.TextItem, SimHub.Plugins",
-              "IsTextItem": true,
-              "Font": "Consolas",
-              "FontWeight": "Normal",
-              "FontSize": 8.0,
-              "Text": "",
-              "TextColor": "#3300FF00",
-              "HorizontalAlignment": 2,
-              "VerticalAlignment": 1,
-              "BackgroundColor": "#00FFFFFF",
-              "Height": 14.0,
-              "Left": 150.0,
-              "Top": 72.0,
-              "Visible": true,
-              "Width": 155.0,
-              "Name": "DebugInfo",
-              "Sid": 5,
-              "Bindings": {
-                "Text": {
-                  "Formula": {
-                    "JSExt": 0,
-                    "Interpreter": 1,
-                    "Expression": "var pct = $prop('GameRawData.Telemetry.LapDistPct');\nvar tid = $prop('DataCorePlugin.GameData.TrackId') || '';\nif (pct === null || pct === undefined) return tid || 'no game';\nreturn (Math.round(pct * 10000) / 10000) + ' | ' + tid;"
-                  },
-                  "Mode": 2
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  ],
-  "Images": [
+  "images": [
     {
       "Name": "CornerBlank",
       "Extension": ".png",
@@ -690,34 +531,58 @@
       "MD5": "f77524c170d6ff7d152c938be1e27777"
     }
   ],
-  "Metadata": {
-    "ScreenCount": 1.0,
-    "InGameScreensIndexs": [
-      0
-    ],
-    "IdleScreensIndexs": [
-      0
-    ],
-    "MainPreviewIndex": 0,
-    "IsOverlay": true,
-    "OverlaySizeWarning": false,
-    "MetadataVersion": 2.0,
-    "PitScreensIndexs": [],
-    "Title": "iRacing Corner Names",
-    "Author": "Custom",
-    "Width": 310.0,
-    "Height": 88.0
-  },
-  "IsOverlay": true,
-  "EnableClickThroughOverlay": true,
-  "EnableOnDashboardMessaging": false,
-  "SnapToGrid": false,
-  "HideLabels": true,
-  "ShowForeground": true,
-  "ForegroundOpacity": 100.0,
-  "ShowBackground": true,
-  "BackgroundOpacity": 100.0,
-  "ShowBoundingRectangles": false,
-  "ShowOnScreenControls": false,
-  "GridSize": 10
+  "section_to_image": {
+    "adenauer-forst": "C_adenauer_forst",
+    "advan-bogen": "C_advan_bogen",
+    "antoniusbuche": "C_antoniusbuche",
+    "aremberg": "C_aremberg",
+    "bergwerk": "C_bergwerk",
+    "bilstein-kurve": "C_bilstein_kurve",
+    "breidscheid": "C_breidscheid",
+    "bruennchen": "C_bruennchen",
+    "dottinger-hohe": "C_dottinger_hohe",
+    "dreifach-rechts": "C_dreifach_rechts",
+    "dunlop-kehre": "C_dunlop_kehre",
+    "einfahrt-nordschleife": "C_einfahrt_nordschleife",
+    "eiskurve": "C_eiskurve",
+    "eschbach": "C_eschbach",
+    "ex-muhle": "C_ex_muhle",
+    "flugplatz": "C_flugplatz",
+    "ford-kurve": "C_ford_kurve",
+    "fuchsroehre": "C_fuchsroehre",
+    "galgenkopf": "C_galgenkopf",
+    "hatzenbach": "C_hatzenbach",
+    "hedwigshoehe": "C_hedwigshoehe",
+    "hocheichen": "C_hocheichen",
+    "hohe-acht": "C_hohe_acht",
+    "hohenrain": "C_hohenrain",
+    "kallenhard": "C_kallenhard",
+    "karussell": "C_karussell",
+    "kesselchen": "C_kesselchen",
+    "kleines-karussell": "C_kleines_karussell",
+    "klostertal": "C_klostertal",
+    "kompression": "C_kompression",
+    "kottenborn": "C_kottenborn",
+    "lauda-links": "C_lauda_links",
+    "metzgesfeld": "C_metzgesfeld",
+    "mutkurve": "C_mutkurve",
+    "nordkehre": "C_nordkehre",
+    "pflanzgarten": "C_pflanzgarten",
+    "postbruecke": "C_postbruecke",
+    "posten-147": "C_posten_147",
+    "quiddelbacher-hohe": "C_quiddelbacher_hohe",
+    "ravenol-kurve": "C_ravenol_kurve",
+    "schumacher-s": "C_schumacher_s",
+    "schwalbenschwanz": "C_schwalbenschwanz",
+    "schwedenkreuz": "C_schwedenkreuz",
+    "spiegelkurve": "C_spiegelkurve",
+    "stefan-bellof-s": "C_stefan_bellof_s",
+    "steilstrecke": "C_steilstrecke",
+    "t13": "C_t13",
+    "tiergarten": "C_tiergarten",
+    "veedol-schikane": "C_veedol_schikane",
+    "wehrseifen": "C_wehrseifen",
+    "wippermann": "C_wippermann",
+    "yokohama-s": "C_yokohama_s"
+  }
 }
