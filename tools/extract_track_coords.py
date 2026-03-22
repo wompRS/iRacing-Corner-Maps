@@ -333,8 +333,8 @@ def main():
     print(f"  Track dimensions: {x_range:.0f}m x {y_range:.0f}m")
     print()
 
-    print("Resampling to 500 points...")
-    points = resample(lap_pcts, xs, ys, num_points=500)
+    print("Resampling to 5000 points...")
+    points = resample(lap_pcts, xs, ys, num_points=5000)
 
     # Write output
     os.makedirs(os.path.dirname(output_path), exist_ok=True)

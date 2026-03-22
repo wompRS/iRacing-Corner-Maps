@@ -8,6 +8,7 @@ import os
 import json
 import hashlib
 import zipfile
+import math
 from PIL import Image, ImageDraw
 
 COORDS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "generated", "track_coords.json")
@@ -101,36 +102,60 @@ def get_section_with_neighbors(coords, section_id, all_sections):
     return points, start_pct, end_pct
 
 
+def smooth_points(points, window=7):
+    """Gaussian-like smoothing of x,y coordinates to remove GPS jitter.
+    Preserves pct values. Uses a simple moving average."""
+    if len(points) < window:
+        return points
+    half = window // 2
+    smoothed = []
+    for i in range(len(points)):
+        lo = max(0, i - half)
+        hi = min(len(points), i + half + 1)
+        sx = sum(p[0] for p in points[lo:hi]) / (hi - lo)
+        sy = sum(p[1] for p in points[lo:hi]) / (hi - lo)
+        smoothed.append((sx, sy, points[i][2]))
+    return smoothed
+
+
 def create_corner_image(points, start_pct, end_pct):
     """Create a corner shape image from real track points.
     Rotated so the entry direction points from bottom to top (driver's perspective).
+    Uses 3x supersampling for smooth anti-aliased lines.
     """
     import math
 
     if len(points) < 2:
         return Image.new("RGBA", (OUT_SIZE, OUT_SIZE), BG_COLOR)
 
-    # Find entry direction: first two points within the actual section
+    SS = 3  # supersample factor
+    render_size = OUT_SIZE * SS
+    render_pad = PADDING * SS
+
+    # Find entry direction: average over first few points for stability
     entry_pts = [(x, y) for x, y, pct in points if pct >= start_pct]
     if len(entry_pts) < 2:
         entry_pts = [(p[0], p[1]) for p in points[:2]]
 
-    dx = entry_pts[1][0] - entry_pts[0][0]
-    dy = entry_pts[1][1] - entry_pts[0][1]
+    # Average direction over several points for smoother rotation
+    n_avg = min(10, len(entry_pts) - 1)
+    dx = entry_pts[n_avg][0] - entry_pts[0][0]
+    dy = entry_pts[n_avg][1] - entry_pts[0][1]
     current_angle = math.atan2(dy, dx)
 
-    # Rotate so entry direction points upward on screen.
-    # Image y increases downward, so "up" = negative y = angle -π/2 in geo coords.
     target_angle = -math.pi / 2
     rotation = target_angle - current_angle
 
-    # Rotate all points around entry point
     cx, cy = entry_pts[0]
     rotated = []
     for x, y, pct in points:
         rx = (x - cx) * math.cos(rotation) - (y - cy) * math.sin(rotation) + cx
         ry = (x - cx) * math.sin(rotation) + (y - cy) * math.cos(rotation) + cy
         rotated.append((rx, ry, pct))
+
+    # Smooth GPS jitter (multiple passes for extra smoothness)
+    rotated = smooth_points(rotated, window=9)
+    rotated = smooth_points(rotated, window=5)
 
     xs = [p[0] for p in rotated]
     ys = [p[1] for p in rotated]
@@ -142,13 +167,13 @@ def create_corner_image(points, start_pct, end_pct):
     if w < 1: w = 1
     if h < 1: h = 1
 
-    draw_area = OUT_SIZE - 2 * PADDING
+    draw_area = render_size - 2 * render_pad
     scale = min(draw_area / w, draw_area / h)
 
     scaled_w = w * scale
     scaled_h = h * scale
-    off_x = (OUT_SIZE - scaled_w) / 2
-    off_y = (OUT_SIZE - scaled_h) / 2
+    off_x = (render_size - scaled_w) / 2
+    off_y = (render_size - scaled_h) / 2
 
     def transform(p):
         return (
@@ -156,34 +181,46 @@ def create_corner_image(points, start_pct, end_pct):
             (p[1] - min_y) * scale + off_y
         )
 
-    points = rotated
-    transformed = [transform(p) for p in points]
+    pts = rotated
+    transformed = [transform(p) for p in pts]
 
-    img = Image.new("RGBA", (OUT_SIZE, OUT_SIZE), BG_COLOR)
+    img = Image.new("RGBA", (render_size, render_size), BG_COLOR)
     draw = ImageDraw.Draw(img)
 
-    # Draw context (extended parts) in dim color
-    # Draw main section in bright color
-    for j in range(len(transformed) - 1):
-        pct = points[j][2]
-        if start_pct <= pct <= end_pct:
-            color = STROKE_COLOR
-            width = STROKE_WIDTH
-        else:
-            color = (100, 100, 100, 150)
-            width = 8
-        draw.line([transformed[j], transformed[j+1]], fill=color, width=width, joint="curve")
+    dim_r = (8 * SS) // 2
+    hl_r = (STROKE_WIDTH * SS) // 2
+    dim_color = (100, 100, 100, 150)
 
-    # Entry dot: first point that's within the actual section
-    for j, p in enumerate(points):
+    # Draw using circle stamps at every point — no joint artifacts
+    # First pass: dim context (before and after the active section)
+    for j in range(len(transformed)):
+        pct = pts[j][2]
+        if not (start_pct <= pct <= end_pct):
+            tx, ty = transformed[j]
+            draw.ellipse([tx - dim_r, ty - dim_r, tx + dim_r, ty + dim_r], fill=dim_color)
+            # Also draw a line to next point for continuity
+            if j + 1 < len(transformed):
+                draw.line([transformed[j], transformed[j + 1]], fill=dim_color, width=dim_r * 2)
+
+    # Second pass: highlighted section on top
+    for j in range(len(transformed)):
+        pct = pts[j][2]
+        if start_pct <= pct <= end_pct:
+            tx, ty = transformed[j]
+            draw.ellipse([tx - hl_r, ty - hl_r, tx + hl_r, ty + hl_r], fill=STROKE_COLOR)
+            if j + 1 < len(transformed) and start_pct <= pts[j + 1][2] <= end_pct:
+                draw.line([transformed[j], transformed[j + 1]], fill=STROKE_COLOR, width=hl_r * 2)
+
+    # Entry dot
+    for j, p in enumerate(pts):
         if p[2] >= start_pct:
             tx, ty = transformed[j]
-            draw.ellipse(
-                [tx - ENTRY_DOT_R, ty - ENTRY_DOT_R, tx + ENTRY_DOT_R, ty + ENTRY_DOT_R],
-                fill=ENTRY_DOT_COLOR
-            )
+            r = ENTRY_DOT_R * SS
+            draw.ellipse([tx - r, ty - r, tx + r, ty + r], fill=ENTRY_DOT_COLOR)
             break
 
+    # Downsample with high-quality filter
+    img = img.resize((OUT_SIZE, OUT_SIZE), Image.LANCZOS)
     return img
 
 
