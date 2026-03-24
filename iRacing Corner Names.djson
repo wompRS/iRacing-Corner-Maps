@@ -81,7 +81,7 @@
                   "Formula": {
                     "JSExt": 1,
                     "Interpreter": 1,
-                    "Expression": "var info = lookupCorner();\nvar parts = info.split('|');\nvar name = parts[0] || '';\nvar dir = parts[1] || '';\nif (!name) {\n  var next = parts[3] || '';\n  return next ? '> ' + next : '';\n}\nif (dir) return dir + '  ' + name;\nreturn name;"
+                    "Expression": "var info = lookupCorner();\nvar parts = info.split('|');\nvar name = parts[0] || '';\nvar dir = parts[1] || '';\nvar turn = parts[6] || '';\nif (!name) {\n  var next = parts[3] || '';\n  var nextTurn = parts[7] || '';\n  if (next) return (nextTurn ? 'T' + nextTurn + ' ' : '') + '> ' + next;\n  return '';\n}\nvar prefix = turn ? 'T' + turn + ' ' : '';\nif (dir) return prefix + dir + '  ' + name;\nreturn prefix + name;"
                   },
                   "Mode": 2
                 },
@@ -118,7 +118,7 @@
                   "Formula": {
                     "JSExt": 1,
                     "Interpreter": 1,
-                    "Expression": "var info = lookupCorner();\nvar parts = info.split('|');\nvar name = parts[0] || '';\nvar next = parts[3] || '';\nif (name && next && name !== next) return 'Next: ' + next;\nreturn '';"
+                    "Expression": "var info = lookupCorner();\nvar parts = info.split('|');\nvar name = parts[0] || '';\nvar next = parts[3] || '';\nvar nextTurn = parts[7] || '';\nif (name && next && name !== next) return 'Next: ' + (nextTurn ? 'T' + nextTurn + ' ' : '') + next;\nreturn '';"
                   },
                   "Mode": 2
                 }

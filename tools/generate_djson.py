@@ -29,12 +29,16 @@ corner_name_expr = (
     "var parts = info.split('|');\n"
     "var name = parts[0] || '';\n"
     "var dir = parts[1] || '';\n"
+    "var turn = parts[6] || '';\n"
     "if (!name) {\n"
     "  var next = parts[3] || '';\n"
-    "  return next ? '> ' + next : '';\n"
+    "  var nextTurn = parts[7] || '';\n"
+    "  if (next) return (nextTurn ? 'T' + nextTurn + ' ' : '') + '> ' + next;\n"
+    "  return '';\n"
     "}\n"
-    "if (dir) return dir + '  ' + name;\n"
-    "return name;"
+    "var prefix = turn ? 'T' + turn + ' ' : '';\n"
+    "if (dir) return prefix + dir + '  ' + name;\n"
+    "return prefix + name;"
 )
 
 corner_color_expr = (
@@ -47,7 +51,8 @@ next_corner_expr = (
     "var parts = info.split('|');\n"
     "var name = parts[0] || '';\n"
     "var next = parts[3] || '';\n"
-    "if (name && next && name !== next) return 'Next: ' + next;\n"
+    "var nextTurn = parts[7] || '';\n"
+    "if (name && next && name !== next) return 'Next: ' + (nextTurn ? 'T' + nextTurn + ' ' : '') + next;\n"
     "return '';"
 )
 
